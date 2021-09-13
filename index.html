@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - inClass rtdb</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+  <div id="wrap">
+    <div id ="login" class="mx-auto">
+    <p id = "nameField">Enter your name to start chatting:  </p>
+ <div id = "name">
+    <input id = "nameBox" placeholder="Enter nickname..."</input>
+    <button id = "setName">Set Nickname</button>
+ </div>
+    </div>
+ <div id = "chatDiv" class = "d-none">
+   <ul class = "list-group list-group-flush" id = "chatHistory">
+    <!--<li class="list-group-item">
+      <div class = "d-flex w-100 justify-content-between">
+        <p>Justin</p>
+        <small>1631547684417</small>
+      </div>
+        <p>Hello world</p>
+      </li> -->
+    </ul>
+  </div>
+  </div>
+  <div class="navbar navbar-light bg-light d-none fixed-bottom" id = "chat">
+    <div class = "container">
+      <input id = "messageBox" class = "form-control input-lg form-group-lg form-group" placeholder="Enter message..."</input>
+        <button id = "send">Send Message</button>
+    </div>
+  </div>
+
+</body>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script type="module" src="./script.js"></script>
+
+</body>
+</html>
