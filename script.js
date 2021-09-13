@@ -61,7 +61,6 @@ rtdb.push(chatRef, newMsg);
 
 $("#send").click(()=>{
   var msg = $("#messageBox").val().replace(/<[^>]+>/g, '');
-  alert(msg);
   if (msg != "")
     addMessage(msg);
 })
