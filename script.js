@@ -39,7 +39,7 @@ rtdb.onChildAdded(chatRef, ss=>{
 });
 
 $("#setName").click(()=>{
-  nickname = $("#nameBox").val();
+  nickname = $("#nameBox").val().replace(/<[^>]+>/g, '');
   if (nickname == "")
      nickname = "Guest";
   $("#name").addClass("d-none");
@@ -60,7 +60,8 @@ rtdb.push(chatRef, newMsg);
 }
 
 $("#send").click(()=>{
-  var msg = $("#messageBox").val();
+  var msg = $("#messageBox").val().replace(/<[^>]+>/g, '');
+  alert(msg);
   if (msg != "")
     addMessage(msg);
 })
