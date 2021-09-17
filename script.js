@@ -27,7 +27,16 @@ let db = rtdb.getDatabase(app);
 let chatRef = rtdb.ref(db, "/chats");
 
 function displayMessage(obj) {
-  $("#chatHistory").append('<li class="list-group-item"><div class = "d-flex w-100 justify-content-between"><p class = "nickname">' + obj.nickname + '</p><small>' + timeConverter(parseInt(obj.timestamp)) + '</small></div><p>' + obj.message + '</p></li>');
+  let msgContents = document.createElement('p');
+  msgContents.innerText = obj.message;
+  let nameContents = document.createElement('p');
+  nameContents.innerText = obj.nickname;
+  nameContents.classList.add("nickname");
+  $("#chatHistory").append('<li class="list-group-item"><div class = "d-flex w-100 justify-content-between">');
+  $("#chatHistory").append(nameContents);
+  $("#chatHistory").append('<small>' + timeConverter(parseInt(obj.timestamp)) + '</small></div>');// + obj.message + '</p></li>');
+  $("#chatHistory").append(msgContents);
+  $("#chatHistory").append('</li>');
 }
 rtdb.onChildAdded(chatRef, ss=>{
   //alert(JSON.stringify(ss.val()));
@@ -39,11 +48,16 @@ rtdb.onChildAdded(chatRef, ss=>{
 });
 
 $("#setName").click(()=>{
-  nickname = $("#nameBox").val().replace(/<[^>]+>/g, '');
+  nickname = $("#nameBox").val();
+  
   if (nickname == "")
      nickname = "Guest";
   $("#name").addClass("d-none");
-  $("#nameField").text("Now chatting as: " + nickname);
+  $("#login").empty();
+  let nameTag = document.createElement('p');
+  nameTag.innerText = "Now chatting as: " + nickname;
+  $("#login").append(nameTag);
+  //$("#nameField").text("Now chatting as: " + nickname);
   $("#chat").removeClass("d-none");
   $("#chatDiv").removeClass("d-none");
   
@@ -60,7 +74,7 @@ rtdb.push(chatRef, newMsg);
 }
 
 $("#send").click(()=>{
-  var msg = $("#messageBox").val().replace(/<[^>]+>/g, '');
+  var msg = $("#messageBox").val();//.replace(/<[^>]+>/g, '');;
   if (msg != "")
     addMessage(msg);
 })
@@ -103,4 +117,3 @@ function timeConverter(timestamp){
   var time = hour + ':' + min + ' ' + month + ' ' + date + ', ' + year;
   return time;
 }
-
