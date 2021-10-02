@@ -1,6 +1,27 @@
 
+label {
+  margin-top:0.5rem;
+  margin-bottom:0.2rem;
+}
 .nickname {
   font-weight: bold;
+}
+#displayName,#logoutBtn {
+  margin-top:1rem;
+  margin-bottom:1rem;
+}
+#login,#register {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%,-50%);
+}
+#registerBtn,#loginBtn {
+  margin-top:1.7rem;
+}
+#acc {
+  margin-bottom:2rem;
 }
 .chatCol{
   margin-right: 20%;
