@@ -1,44 +1,54 @@
-<!DOCTYPE html>
-<html lang="en" >
 <head>
-  <meta charset="UTF-8">
-  <title>CodePen - inClass rtdb</title>
-  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
+
 <body>
-<!-- partial:index.partial.html -->
-<body>
-  <div id="wrap">
-    <div id ="login" class="mx-auto">
-    <p id = "nameField">Enter your name to start chatting:  </p>
- <div id = "name">
-    <input id = "nameBox" placeholder="Enter nickname..."</input>
-    <button id = "setName">Set Nickname</button>
- </div>
+    <div id="wrap">
+        <div id="login">
+
+            <h3>Returning User</h3>
+            <input type="text" id="logemail" placeholder="Email" />
+            <input type="password" id="logpass" placeholder="Password" />
+            <button type="button" id="loginBtn">Login</button>
+
+            <p>Don't have an account? <a id="registerUserText" class="link-danger ">Register</a></p>
+        </div>
+        <div id="register" class="d-none">
+
+            <h3>Register New User</h3>
+            <input type="text" id="regname" placeholder="Display Name" />
+            <input type="text" id="regemail" placeholder="Email" />
+            <input type="password" id="regpass1" placeholder="Password" />
+            <input type="password" id="regpass2" placeholder="Confirm Password" />
+
+            <button type="button" id="registerBtn">Register Account</button>
+            <p>Have an account? <a id="returningUserText" class="link-danger ">Log in</a></p>
+        </div>
+        <div id="chatDiv" class="d-none chatCol">
+            <div id="acc">
+                <p id="displayName"></p>
+                <button type="button" id="logoutBtn">Logout</button>
+            </div>
+            <ul class="list-group list-group-flush" id="chatHistory">
+            </ul>
+        </div>
     </div>
- <div id = "chatDiv" class = "d-none">
-   <ul class = "list-group list-group-flush" id = "chatHistory">
-    <!--<li class="list-group-item">
-      <div class = "d-flex w-100 justify-content-between">
-        <p>Justin</p>
-        <small>1631547684417</small>
-      </div>
-        <p>Hello world</p>
-      </li> -->
-    </ul>
-  </div>
-  </div>
-  <div class="navbar navbar-light bg-light d-none fixed-bottom" id = "chat">
-    <div class = "container">
-      <input id = "messageBox" class = "form-control input-lg form-group-lg form-group" placeholder="Enter message..."</input>
+    <div class="navbar navbar-light bg-light d-none fixed-bottom chatCol" id="chat">
+
+        <div class="input-group" id="chatUI">
+            <input id="messageBox" type="text" class="form-control" placeholder="Enter message..."autocomplete="off">
+            <div class="input-group-btn">
+                <button class="btn btn-default" id="send">
+                    <i class="bi-cursor"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!--<div class = "container">
+      <input type="text" id = "messageBox" class = "form-control" placeholder="Enter message..."</input>
         <button id = "send">Send Message</button>
+    </div>-->
     </div>
-  </div>
 
 </body>
-<!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script type="module" src="./script.js"></script>
-
-</body>
-</html>
