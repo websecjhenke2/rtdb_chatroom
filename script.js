@@ -46,17 +46,17 @@ function sendMsg() {
     var msg = $("#messageBox").val();
     msg = msg.trim().replaceAll(" +", " ");
     if (msg[0] == '/' && msg.length > 10) {
-      if (msg.substring(1,9) === 'nickname'){
-        let newName = msg.substring(10,msg.length)
-        rtdb.set(rtdb.ref(db, "/users/" + auth.currentUser.uid + "/displayName"), newName);
-        $("#messageBox").val("");
-        document.getElementById("displayName").innerText = "Logged in as: "+ newName + " ("+auth.currentUser.email+")";
-        msg="";
-      }
+        if (msg.substring(1, 9) === 'nickname') {
+            let newName = msg.substring(10, msg.length)
+            rtdb.set(rtdb.ref(db, "/users/" + auth.currentUser.uid + "/displayName"), newName);
+            $("#messageBox").val("");
+            document.getElementById("displayName").innerText = "Logged in as: " + newName + " (" + auth.currentUser.email + ")";
+            msg = "";
+        }
     }
     else {
-      if (msg != "")
-        addMessage(msg);
+        if (msg != "")
+            addMessage(msg);
     }
 }
 
@@ -71,6 +71,7 @@ function removeEditMenu(id) {
 
 //Way too large function for displaying messages and adding editing / deletion functionality
 function displayMessage(obj, msgID) {
+
 
     //shorthand for current message id selector for jQuery bc your boi forgets the #
     let id = "#" + msgID;
@@ -91,9 +92,9 @@ function displayMessage(obj, msgID) {
     delConfirm.classList.add("btn-group");
     delConfirm.classList.add("d-none");
     delConfirm.id = msgID + '_delConfirm';
-    delConfirm.innerHTML='<button type="button" class="btn btn-danger btn-sm" id="' + msgID + '_nuke">Delete Forever</button><button type="button" class="btn btn-outline-secondary btn-sm" id="' + msgID + '_cancel">Cancel Action</button>'
-    
-  
+    delConfirm.innerHTML = '<button type="button" class="btn btn-danger btn-sm" id="' + msgID + '_nuke">Delete Forever</button><button type="button" class="btn btn-outline-secondary btn-sm" id="' + msgID + '_cancel">Cancel Action</button>'
+
+
     //retrieve and sanitize username
     let nick = rtdb.ref(db, `/users/${obj.uuid}/displayName`);
     rtdb.onValue(nick, ss => {
@@ -101,7 +102,7 @@ function displayMessage(obj, msgID) {
         nameContents.innerText = ss.val();
     });
     nameContents.classList.add("nickname");
-    
+
     //build barebones messageContainer html structure
     let messageContainer = '<li class="list-group-item" id="' + msgID + '"><div class = "d-flex w-100 justify-content-between" id="' + msgID + '_name"><small id="' + msgID + '_btn"</small><small class="time" id="' + msgID + '_time">' + timeConverter(parseInt(obj.timestamp)) + '</small></div><div class="d-flex w-100 justify-content-between" id="' + msgID + '_msg"></div></li>';
 
@@ -114,11 +115,11 @@ function displayMessage(obj, msgID) {
     if (obj.edited == "true")
         $(id + "_msg").append("<small class='editFlag'>(edited)</small>");
     btnCluster.innerHTML = '<button type="button" class="btn btn-outline-danger btn-sm" id="' + msgID + '_del">Delete</button>';
-    
+
     //Only the original sender can edit message
     if (obj.uuid === auth.currentUser.uid)
         btnCluster.innerHTML = '<button type="button" class="btn btn-outline-secondary btn-sm" id="' + msgID + '_edit">Edit</button>' + btnCluster.innerHTML;
-    
+
     //admin is added here because they can delete rowdy messages
     if (obj.uuid === auth.currentUser.uid || admin) {
         $(id + "_btn").append(btnCluster);
@@ -160,10 +161,10 @@ function displayMessage(obj, msgID) {
 
             $(document).keyup(function (e) {
                 if (e.key === "Escape") { // escape key maps to keycode `27`
-                  if (document.getElementById("editWarn") != null)
-                    $("#esc").click();
-                  else
-                    window.scrollTo(0, document.body.scrollHeight);
+                    if (document.getElementById("editWarn") != null)
+                        $("#esc").click();
+                    else
+                        window.scrollTo(0, document.body.scrollHeight);
                 }
                 if (e.key === "Enter" && document.activeElement === document.getElementById("editBox")) {
                     $("#ent").click();
@@ -171,17 +172,17 @@ function displayMessage(obj, msgID) {
             });
         });
 
-        
+
         $(id + "_del").on("click", () => {
-          $(id + '_btnCluster').addClass("d-none");
-          $(id + '_delConfirm').removeClass("d-none");
-          $(id + "_nuke").on("click", ()=>{
-            rtdb.remove(rtdb.ref(db, "/chats/" + msgID));
-          });
-          $(id + "_cancel").on("click", ()=>{
-            $(id + '_delConfirm').addClass("d-none");
-            $(id + '_btnCluster').removeClass("d-none");
-          });
+            $(id + '_btnCluster').addClass("d-none");
+            $(id + '_delConfirm').removeClass("d-none");
+            $(id + "_nuke").on("click", () => {
+                rtdb.remove(rtdb.ref(db, "/chats/" + msgID));
+            });
+            $(id + "_cancel").on("click", () => {
+                $(id + '_delConfirm').addClass("d-none");
+                $(id + '_btnCluster').removeClass("d-none");
+            });
         });
     }
 
@@ -218,7 +219,8 @@ function loadChatWindow() {
 
     //When a message is added to the db
     rtdb.onChildAdded(chatRef, ss => {
-        displayMessage(ss.val(), ss.key);
+        if (!/[^a-zA-Z0-9-_]/.test(ss.key) && ss.key.startsWith("-") && !ss.key.includes('"') && !ss.key.includes("'"))
+            displayMessage(ss.val(), ss.key);
         window.scrollTo(0, document.body.scrollHeight);
         if (ss.val().uuid === auth.currentUser.uid)
             latestMsg = ss.key;
@@ -249,9 +251,9 @@ function loadChatWindow() {
     rtdb.onValue(nick, ss => {
         //
         name = ss.val();
-        document.getElementById("displayName").innerText = "Logged in as: "+ name + "  ("+auth.currentUser.email+")"
+        document.getElementById("displayName").innerText = "Logged in as: " + name + "  (" + auth.currentUser.email + ")"
     });
-    
+
 
     //Focus on text box
     document.getElementById("messageBox").focus();
@@ -292,7 +294,7 @@ $("#loginBtn").on("click", () => {
     $("#logpass").val("");
     fbauth.signInWithEmailAndPassword(auth, email, pwd).then(
         somedata => {
-            
+
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -315,7 +317,7 @@ $("#registerBtn").on("click", () => {
         $("#regpass2").val("");
         return;
     }
-    
+
     fbauth.createUserWithEmailAndPassword(auth, email, p1).then(somedata => {
         let uid = somedata.user.uid;
         fbauth.updateProfile(somedata.user, {
@@ -341,7 +343,8 @@ $("#registerBtn").on("click", () => {
 function addMessage(messageContents) {
     $("#messageBox").val("");
     var date = new Date();
-    let newMsg = { "message": messageContents, "uuid": auth.currentUser.uid, "timestamp": date.getTime(), "edited": "false" };
+    let newMsg = { "message": messageContents, "uuid": auth.currentUser.uid, "timestamp": parseInt(date.getTime()), "edited": "false" };
+    console.log(JSON.stringify(newMsg));
     rtdb.push(chatRef, newMsg);
 }
 
@@ -353,16 +356,16 @@ $("#send").on("click", () => {
 
 $("#registerUserText").click(function () {
     $("#login").addClass("d-none");
-    
+
     $("#register").removeClass("d-none");
-    
+
 
 });
 $("#returningUserText").click(function () {
     $("#register").addClass("d-none");
-    
+
     $("#login").removeClass("d-none");
-    
+
 });
 
 document.getElementById("messageBox").addEventListener("keyup", function (event) {
