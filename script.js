@@ -36,7 +36,7 @@ var date = new Date();
 const app = initializeApp(firebaseConfig);
 let serverID = 'Welcome';
 let currentServer = '/servers/Welcome';
-let currentChannel = 'general';
+let currentChannel = '-Mlx5Zfwe93FGAjhhqgd';
 const urlParams = new URLSearchParams(window.location.search);
 
 urlParams.set('server',serverID);
@@ -94,7 +94,8 @@ function displayMessage(obj, msgID) {
   
     //shorthand for current message id selector for jQuery bc your boi forgets the #
     let id = "#" + msgID;
-    
+    if (document.getElementById(msgID) != null)
+      document.getElementById(msgID).remove();
     //DOM elements for input sanitation
     let msgContents = document.createElement('p');
     msgContents.innerText = obj.message;
@@ -259,6 +260,7 @@ function loadChatWindow() {
     });
     //When a message is deleted from the database
     rtdb.onChildRemoved(chatRef, ss => {
+      if (document.getElementById(ss.key) != null)
         document.getElementById(ss.key).remove();
     });
       
@@ -296,7 +298,7 @@ function loadChannelList() {
   if (urlParams.get('channel') == ss.key)
     active = 'active';
   $("#channelList").append(`<a class="list-group-item list-group-item-action ${active}" id='${ss.key}_channel'>
-#${ss.key}
+#${ss.val().channelName}
 </a>`);
   document.getElementById(ss.key + '_channel').addEventListener("click", function () {
     document.querySelector('.active').classList.remove('active');
@@ -304,11 +306,42 @@ function loadChannelList() {
 
     urlParams.set('channel', ss.key);
     chatRef = rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/${ss.key}`);
+    
     loadChatWindow();
   });
 
 });
 }
+
+$("#createChannelBtn").on("click", () =>{
+  $("#createChannelBtn").addClass('d-none');
+  $('#channel_conf').removeClass('d-none');
+  $("#channelName").removeClass('d-none');
+});
+document.getElementById("createChannelBtn_conf").addEventListener("click", createChannel);
+
+function createChannel() {
+  let name = $("#channelName").val()
+  console.log(name);
+  let Json = JSON.parse(`
+  {
+    "channelName":"${name}"
+  }`);
+  if(/^[a-zA-Z0-9-_]+$/.test(name)){
+    rtdb.push(rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/`), Json);
+  }else {
+    $("channelName").val("");
+    shake('channelName');
+  }
+    $("#createChannelBtn_cancel").click();
+}
+$("#createChannelBtn_cancel").on("click", () => {
+  $("#createChannelBtn").removeClass('d-none');
+  $('#channel_conf').addClass('d-none');
+  $("#channelName").val("");
+  $("#channelName").addClass('d-none');
+});
+
 //Detect login/logout
 fbauth.onAuthStateChanged(auth, user => {
     if (!!user) {
@@ -316,12 +349,17 @@ fbauth.onAuthStateChanged(auth, user => {
         let adminCheck = rtdb.ref(db, '/servers/' + urlParams.get('server') + `/users/${auth.currentUser.uid}/roles/admin`);
         rtdb.onValue(adminCheck, ss => {
             admin = ss.val();
+            if (admin)
+              document.getElementById("createChannelBtn").classList.remove('d-none');
         });
+        
         loadChannelList();
         loadChatWindow();
 
     } else {
         hideChatWindow();
+        $("#channelList").empty();
+        $("#createChannelBtn").addClass('d-none');
         $("#chatHistory").empty();
     }
 });

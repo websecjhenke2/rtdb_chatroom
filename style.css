@@ -2,7 +2,9 @@ active a{
     background-color: #FF0000;
 }
 #channelCol {
-  max-width:15%
+  position:absolute;
+  min-width:10%;
+  max-width:10%
 }
 .nav-pills > li.active > a{
     color: red;
