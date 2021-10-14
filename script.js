@@ -298,8 +298,8 @@ function loadChannelList() {
   if (urlParams.get('channel') == ss.key)
     active = 'active';
   $("#channelList").append(`<a class="list-group-item list-group-item-action ${active}" id='${ss.key}_channel'>
-#${ss.val().channelName}
 </a>`);
+  document.getElementById(`${ss.key}_channel`).innerText='#'+ss.val().channelName;
   document.getElementById(ss.key + '_channel').addEventListener("click", function () {
     document.querySelector('.active').classList.remove('active');
     this.classList.add('active');
