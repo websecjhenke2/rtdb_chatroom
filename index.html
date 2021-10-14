@@ -1,73 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTDB Chat Room</title>
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <meta charset="UTF-8">
+  <title>CodePen - Multiple channels</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+
 </head>
-
 <body>
-    <div id="wrap">
-        <div id="login" class="form-group">
+<!-- partial:index.partial.html -->
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
-            <h3>Returning User</h3>
-            <label for="email">Email:</label>
-            <input type="text" id="logemail" placeholder="Enter Email" class="form-control" />
-            <label for="pwd">Password:</label>
-            <input type="password" id="logpass" placeholder="Enter Password" class="form-control" />
-            <button type="button" id="loginBtn" class="btn btn-outline-secondary form-control">Login</button>
+<div id="wrap">
+  <div id="login" class="form-group">
 
-            <p>Don't have an account? <a id="registerUserText" class="link-danger ">Register</a></p>
-        </div>
-        <div id="register" class="d-none form-group">
+    <h3>Returning User</h3>
 
-            <h3>Register New User</h3>
-            <label for="email">Username:</label>
-            <input type="text" id="regname" placeholder="Enter Display Name" class="form-control" />
-            <label for="email">Email:</label>
-            <input type="text" id="regemail" placeholder="Enter Email" class="form-control" />
-            <label for="pwd">Password:</label>
-            <input type="password" id="regpass1" placeholder="Enter Password" class="form-control" />
-            <label for="pwd">Confirm Password:</label>
-            <input type="password" id="regpass2" placeholder="Confirm Password" class="form-control" />
+    <label for="email">Email:</label>
+    <input type="text" id="logemail" placeholder="Enter Email" class="form-control" />
+    <label for="pwd">Password:</label>
+    <input type="password" id="logpass" placeholder="Enter Password" class="form-control" />
+    <p id='logError' class='text-danger'></p>
+    <button type="button" id="loginBtn" class="btn btn-outline-secondary form-control">Login</button>
 
-            <button type="button" id="registerBtn" class="btn btn-outline-secondary form-control">Register
-                Account</button>
-            <p>Have an account? <a id="returningUserText" class="link-danger">Log in</a></p>
-        </div>
-        <div id="chatDiv" class="d-none chatCol">
-            <div id="acc" class="d-flex w-100 justify-content-between">
-                <p id="displayName"></p>
-                <button type="button" id="logoutBtn" class="btn btn-outline-secondary btn-sm">Logout</button>
-            </div>
-            <ul class="list-group list-group-flush" id="chatHistory">
-            </ul>
-        </div>
+    <p>Don't have an account? <a id="registerUserText" class="link-danger ">Register</a></p>
+  </div>
+  <div id="register" class="d-none form-group">
+
+    <h3>Register New User</h3>
+
+    <label for="email">Username:</label>
+    <input type="text" id="regname" placeholder="Enter Display Name" class="form-control" />
+    <label id='regEmailLabel' for="email">Email:</label>
+    <input type="text" id="regemail" placeholder="Enter Email" class="form-control" />
+    <label for="pwd">Password:</label>
+    <input type="password" id="regpass1" placeholder="Enter Password" class="form-control" />
+    <label for="pwd">Confirm Password:</label>
+    <input type="password" id="regpass2" placeholder="Confirm Password" class="form-control" />
+    <p id='regError' class="text-danger"></p>
+    <button type="button" id="registerBtn" class="btn btn-outline-secondary form-control">Register Account</button>
+    <p>Have an account? <a id="returningUserText" class="link-danger">Log in</a></p>
+  </div>
+  <div id="acc" class="navbar navbar-light bg-light d-none fixed-top chatCol d-flex justify-content-between">
+    <p id="displayName"></p>
+    <button type="button" id="logoutBtn" class="btn btn-outline-secondary btn-sm">Logout</button>
+  </div>
+  <div id="channelCol" class="">
+    <div id='channelList' class="list-group list-group-flush">
+
     </div>
-    <div class="navbar navbar-light bg-light d-none fixed-bottom chatCol" id="chat">
+  </div>
+  <div id="chatDiv" class="d-none chatCol">
 
-        <div class="input-group" id="chatUI">
-            <input id="messageBox" type="text" class="form-control" placeholder="Enter message..." autocomplete="off">
-            <div class="input-group-btn">
-                <button class="btn btn-default" id="send">
-                    <i class="bi-cursor"></i>
-                </button>
-            </div>
-        </div>
+    <ul class="list-group list-group-flush" id="chatHistory">
+    </ul>
+  </div>
+</div>
+<div class="navbar navbar-light bg-light d-none fixed-bottom chatCol" id="chat">
+
+  <div class="input-group" id="chatUI">
+    <input id="messageBox" type="text" class="form-control" placeholder="Enter message..." autocomplete="off">
+    <div class="input-group-btn">
+      <button class="btn btn-default" id="send">
+        <i class="bi-cursor"></i>
+      </button>
+    </div>
+  </div>
 
 
-        <!--<div class = "container">
+  <!--<div class = "container">
           <input type="text" id = "messageBox" class = "form-control" placeholder="Enter message..."</input>
             <button id = "send">Send Message</button>
         </div>-->
-    </div>
-</body>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-<script type="module" src="./script.js"></script>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script type="module" src="./script.js"></script>
 
+</body>
 </html>
