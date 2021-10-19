@@ -2,12 +2,12 @@
 
 How to use:
 1. Open the webpage
-2. Register for an account
-  a. Reset password if you forget your credentials
-4. Start chatting with your friends!
-  a. Channels are on the left
-  b. Users in the server are on the right
-  c. Admins are denoted by an admin tag, you are denoted by a bold name and a 'you' tag
+2. Register for an account\n
+  a. Reset password if you forget your credentials\n
+4. Start chatting with your friends!\n
+  a. Channels are on the left\n
+  b. Users in the server are on the right\n
+  c. Admins are denoted by an admin tag, you are denoted by a bold name and a 'you' tag\n
  
  
 
