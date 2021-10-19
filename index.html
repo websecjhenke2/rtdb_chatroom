@@ -13,71 +13,109 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
 <div id="wrap">
-  <div id="login" class="form-group">
 
-    <h3>Returning User</h3>
+    <div id="login" class="form-group">
 
-    <label for="email">Email:</label>
-    <input type="text" id="logemail" placeholder="Enter Email" class="form-control" />
-    <label for="pwd">Password:</label>
-    <input type="password" id="logpass" placeholder="Enter Password" class="form-control" />
-    <p id='logError' class='text-danger'></p>
-    <button type="button" id="loginBtn" class="btn btn-outline-secondary form-control">Login</button>
+        <h3>Returning User</h3>
 
-    <p>Don't have an account? <a id="registerUserText" class="link-danger ">Register</a></p>
-  </div>
-  <div id="register" class="d-none form-group">
+        <label for="email">Email:</label>
+        <input type="text" id="logemail" placeholder="Enter Email" class="form-control" />
+        <label for="pwd">Password:</label>
+        <input type="password" id="logpass" placeholder="Enter Password" class="form-control" />
+        <p id='logError' class='text-danger'></p>
+        <button type="button" id="loginBtn" class="btn btn-outline-secondary form-control">Login</button>
 
-    <h3>Register New User</h3>
+        <p>Don't have an account? <a id="registerUserText" class="link-danger ">Register</a></p>
+        <p>Forget your password? <a id="resetEmailFromLogText" class="link-danger ">Reset</a></p>
+    </div>
+    <div id="register" class="d-none form-group">
 
-    <label for="email">Username:</label>
-    <input type="text" id="regname" placeholder="Enter Display Name" class="form-control" />
-    <label id='regEmailLabel' for="email">Email:</label>
-    <input type="text" id="regemail" placeholder="Enter Email" class="form-control" />
-    <label for="pwd">Password:</label>
-    <input type="password" id="regpass1" placeholder="Enter Password" class="form-control" />
-    <label for="pwd">Confirm Password:</label>
-    <input type="password" id="regpass2" placeholder="Confirm Password" class="form-control" />
-    <p id='regError' class="text-danger"></p>
-    <button type="button" id="registerBtn" class="btn btn-outline-secondary form-control">Register Account</button>
-    <p>Have an account? <a id="returningUserText" class="link-danger">Log in</a></p>
-  </div>
-  <div id="acc" class="navbar navbar-light bg-light d-none fixed-top chatCol d-flex justify-content-between">
-    <p id="displayName"></p>
-    <button type="button" id="logoutBtn" class="btn btn-outline-secondary btn-sm">Logout</button>
-  </div>
-  <div id="channelCol" class="">
-    <div id='channelList' class="list-group list-group-flush">
+        <h3>Register New User</h3>
+
+        <label for="email">Username:</label>
+        <input type="text" id="regname" placeholder="Enter Display Name" class="form-control" />
+        <label id='regEmailLabel' for="email">Email:</label>
+        <input type="text" id="regemail" placeholder="Enter Email" class="form-control" />
+        <label for="pwd">Password:</label>
+        <input type="password" id="regpass1" placeholder="Enter Password" class="form-control" />
+        <label for="pwd">Confirm Password:</label>
+        <input type="password" id="regpass2" placeholder="Confirm Password" class="form-control" />
+        <p id='regError' class="text-danger"></p>
+        <button type="button" id="registerBtn" class="btn btn-outline-secondary form-control">Register Account</button>
+        <p>Have an account? <a id="returningUserText" class="link-danger">Log in</a></p>
+        <p>Forget your password? <a id="resetEmailFromRegText" class="link-danger ">Reset</a></p>
+    </div>
+
+    <div id="reset" class="form-group d-none">
+
+        <h3>Password Reset Form</h3>
+
+        <label for="email">Email:</label>
+        <input type="text" id="resetEmail" placeholder="Enter Email" class="form-control" />
+
+        <p id='resetError' class=''></p>
+        <button type="button" id="resetEmailBtn" class="btn btn-outline-secondary form-control">Send Reset
+            Email</button>
+        <button type="button" id="resetLogin" class="btn btn-outline-danger form-control">Cancel</button>
+    </div>
+
+    <div id="acc" class="navbar navbar-light bg-light d-none fixed-top chatCol d-flex justify-content-between">
+        <p id="displayName"></p>
+        <div class='btn-group'>
+
+            <button type="button" id="changeName" class="btn btn-outline-primary btn-sm">Change Nickname</button>
+            <button type="button" id="logoutBtn" class="btn btn-outline-secondary btn-sm">Logout</button>
+        </div>
 
     </div>
-    <div id = 'createChannel'>
-      <input type="text" id="channelName" placeholder="Enter name" class="channel form-control d-none" />
-    <button type="button" id="createChannelBtn" class="d-none form-control btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></button>
-      <div class = 'btn-group d-none' id='channel_conf'>
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="createChannelBtn_conf">Add channel</button>
-        <button type="button" class="btn btn-outline-danger btn-sm" id="createChannelBtn_cancel">Cancel</button>
-      </div>
-    </div>
-  </div>
-  <div id="chatDiv" class="d-none chatCol">
-
-    <ul class="list-group list-group-flush" id="chatHistory">
-    </ul>
+  <div class ='d-none' id ='userColumn'>
+    <h3>Users:</h3>
+  <div id='userList' class="list-group list-group-flush">
+    
   </div>
 </div>
+    <div id="channelCol" class="">
+        <div id='channelList' class="list-group list-group-flush">
+
+        </div>
+        <div id='createChannel'>
+            <input type="text" id="channelName" placeholder="Enter name" class="channel form-control d-none" />
+            <button type="button" id="createChannelBtn" class="d-none form-control btn btn-outline-secondary btn-sm"><i
+                    class="bi bi-plus"></i></button>
+            <div class='btn-group d-none' id='channel_conf'>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="createChannelBtn_conf">Add
+                    channel</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" id="createChannelBtn_cancel">Cancel</button>
+            </div>
+
+
+        </div>
+        <div id='delChannelDiv' class='btn-group'>
+            <button type="button" id="deleteChannelConfirm" class="btn-danger btn-sm d-none">Delete Permanently</button>
+            <button type="button" id="deleteChannelCancel" class="btn-secondary btn-sm d-none">Cancel</button>
+            <button type="button" id="deleteChannelBtn" class="btn-danger btn-sm d-none">Delete Channel</button>
+        </div>
+    </div>
+    <div id="chatDiv" class="d-none chatCol">
+
+        <ul class="list-group list-group-flush" id="chatHistory">
+        </ul>
+    </div>
+</div>
+
 <div class="navbar navbar-light bg-light d-none fixed-bottom chatCol" id="chat">
 
-  <div class="input-group" id="chatUI">
-    <input id="messageBox" type="text" class="form-control" placeholder="Enter message..." autocomplete="off">
-    <div class="input-group-btn">
-      <button class="btn btn-default" id="send">
-        <i class="bi-cursor"></i>
-      </button>
+    <div class="input-group" id="chatUI">
+        <input id="messageBox" type="text" class="form-control" placeholder="Enter message..." autocomplete="off">
+        <div class="input-group-btn">
+            <button class="btn btn-default" id="send">
+                <i class="bi-cursor"></i>
+            </button>
+        </div>
     </div>
-  </div>
 
 
-  <!--<div class = "container">
+    <!--<div class = "container">
           <input type="text" id = "messageBox" class = "form-control" placeholder="Enter message..."</input>
             <button id = "send">Send Message</button>
         </div>-->

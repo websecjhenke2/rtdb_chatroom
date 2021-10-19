@@ -36,9 +36,11 @@ var date = new Date();
 const app = initializeApp(firebaseConfig);
 let serverID = 'Welcome';
 let currentServer = '/servers/Welcome';
-let currentChannel = '-Mlx5Zfwe93FGAjhhqgd';
+let currentChannel = '-MlxAABiOZeDhhxMaiQ3';
 const urlParams = new URLSearchParams(window.location.search);
+var generalChatID;
 
+let channelNameList = [""];
 urlParams.set('server',serverID);
 urlParams.set('channel',currentChannel);
 
@@ -292,18 +294,28 @@ function hideChatWindow() {
     $("#acc").addClass("d-none");
 }
 function loadChannelList() {
+  $("#channelList").empty();
   rtdb.onChildAdded(rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/`), ss => {
   var active = "";
-
+  if (ss.val().channelName == 'general')
+    generalChatID = ss.key;
   if (urlParams.get('channel') == ss.key)
     active = 'active';
   $("#channelList").append(`<a class="list-group-item list-group-item-action ${active}" id='${ss.key}_channel'>
+#${ss.val().channelName}
 </a>`);
-  document.getElementById(`${ss.key}_channel`).innerText='#'+ss.val().channelName;
+    channelNameList.push(ss.val().channelName);
   document.getElementById(ss.key + '_channel').addEventListener("click", function () {
     document.querySelector('.active').classList.remove('active');
     this.classList.add('active');
-
+    if(admin)
+      $("#deleteChannelCancel").click();
+    console.log(ss.key + " " + generalChatID);
+    if (ss.key == generalChatID) {
+      document.getElementById('deleteChannelBtn').classList.add("d-none");
+    }
+    else
+      document.getElementById('deleteChannelBtn').classList.remove("d-none");
     urlParams.set('channel', ss.key);
     chatRef = rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/${ss.key}`);
     
@@ -311,6 +323,109 @@ function loadChannelList() {
   });
 
 });
+  rtdb.onChildRemoved(rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/`), ss => {
+    if (generalChatID == ss.key) {
+      shake(ss.key+'_channel');
+      $("#deleteChannelCancel").click();
+      $("#deleteChannelBtn").addClass("d-none");
+    }
+    else {
+      document.getElementById(ss.key + "_channel").remove();
+      $(`#${generalChatID}_channel`).addClass("active");
+      $(`#${generalChatID}_channel`).click();
+      $("#deleteChannelCancel").click();
+      document.getElementById(`${generalChatID}_channel`).click();
+      urlParams.set('channel',generalChatID);
+    }
+  });
+  
+}
+
+function loadUsers() {
+  $("#userList").empty();
+  $("#userColumn").removeClass("d-none");
+  
+  rtdb.onChildAdded(rtdb.ref(db, `/servers/${urlParams.get('server')}/users/`),ss => {
+    let userInfo = `
+    <div class="d-flex w-100 justify-content-between" id=${ss.key}_userInfo>
+      <p id="${ss.key}_username"><p>
+      <button id="${ss.key}_promoteToAdmin" class="adminBtn btn btn-outline-secondary btn-sm">Make Admin</button>
+      <button id="${ss.key}_demote" class="adminBtn btn btn-outline-danger btn-sm">Revoke</button>
+    </div>
+    `;
+    $("#userList").append(userInfo);
+    if (admin) {
+      $(`#${ss.key}_promoteToAdmin`).on("click", () => {
+        rtdb.set(rtdb.ref(db, `/servers/${urlParams.get('server')}/users/${ss.key}/roles/admin`), true);
+      });
+      $(`#${ss.key}_demote`).on("click", () => {
+        rtdb.remove(rtdb.ref(db, `/servers/${urlParams.get('server')}/users/${ss.key}/roles/admin`));
+      });
+    }
+    else {
+      if (ss.val().roles.admin)
+        $(`#${ss.key}_userInfo`).append("<small>(admin)</small>");
+    }
+    if (auth.currentUser.uid == ss.key) {
+      
+      $(`#${ss.key}_username`).addClass("nickname");
+      document.getElementById(`${ss.key}_demote`).remove();
+      document.getElementById(`${ss.key}_promoteToAdmin`).remove();
+      $(`#${ss.key}_userInfo`).append("<small>(you)</small>");
+    }
+    else if (admin && !ss.val().roles.admin) {
+      document.getElementById(`${ss.key}_demote`).classList.add('d-none');
+      
+    }
+    else if (admin && ss.val().roles.admin) {
+      
+      document.getElementById(`${ss.key}_promoteToAdmin`).classList.add('d-none');
+    }
+    else {//not admin at all
+      document.getElementById(`${ss.key}_promoteToAdmin`).remove();
+      document.getElementById(`${ss.key}_demote`).remove();
+    }
+    
+    document.getElementById(`${ss.key}_username`).innerText = ss.val().displayName;
+    //console.log(ss.val().roles.admin);
+    //if user on list isn't admin but current user is
+    if(!ss.val().roles.admin && admin) {
+        
+      //detect when mouse enters a message space
+        $(`#${ss.key}_userInfo`).mouseenter(function () {
+          $(`${ss.key}_userInfo`).addClass('activeMsg');
+          console.log(`entered ${ss.key}_userInfo`);
+        });
+    
+
+        //when mouse cursor leaves
+        $(`#${ss.key}_userInfo`).mouseleave(function () {
+          $(`${ss.key}_userInfo`).removeClass('activeMsg');
+          console.log(`left ${ss.key}_userInfo`);
+          
+        });
+    };
+    
+  });
+  
+  rtdb.onChildChanged(rtdb.ref(db, `/servers/${urlParams.get('server')}/users/`),ss => {
+    document.getElementById(`${ss.key}_username`).innerText = ss.val().displayName;
+    if (admin) {
+      
+      if (ss.val().roles.admin) {
+
+        document.getElementById(`${ss.key}_promoteToAdmin`).classList.add('d-none');
+        document.getElementById(`${ss.key}_demote`).classList.remove('d-none');
+      }
+      else
+        {
+          document.getElementById(`${ss.key}_promoteToAdmin`).classList.remove('d-none');
+          document.getElementById(`${ss.key}_demote`).classList.add('d-none');
+      }
+    }
+    else if (ss.val().roles.admin)
+        $(`#${ss.key}_userInfo`).append("<small>(admin)</small>");
+  });
 }
 
 $("#createChannelBtn").on("click", () =>{
@@ -327,13 +442,15 @@ function createChannel() {
   {
     "channelName":"${name}"
   }`);
-  if(/^[a-zA-Z0-9-_]+$/.test(name)){
+  
+  if(/^[a-zA-Z0-9-_]+$/.test(name) && !channelNameList.includes($("#channelName").val()) && $("#channelName").val().length > 0){
     rtdb.push(rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/`), Json);
+    $("#createChannelBtn_cancel").click();
   }else {
-    $("channelName").val("");
+    $("#channelName").val("");
     shake('channelName');
   }
-    $("#createChannelBtn_cancel").click();
+    
 }
 $("#createChannelBtn_cancel").on("click", () => {
   $("#createChannelBtn").removeClass('d-none');
@@ -346,24 +463,56 @@ $("#createChannelBtn_cancel").on("click", () => {
 fbauth.onAuthStateChanged(auth, user => {
     if (!!user) {
       
+        
         let adminCheck = rtdb.ref(db, '/servers/' + urlParams.get('server') + `/users/${auth.currentUser.uid}/roles/admin`);
         rtdb.onValue(adminCheck, ss => {
             admin = ss.val();
-            if (admin)
-              document.getElementById("createChannelBtn").classList.remove('d-none');
+            if (admin) {
+               document.getElementById("createChannelBtn").classList.remove("d-none");
+              
+            }
+            else {
+              document.getElementById("deleteChannelBtn").classList.add('d-none');
+              document.getElementById("createChannelBtn").classList.add('d-none');
+            }
+          loadChannelList();
+          loadChatWindow();
+          loadUsers();
         });
         
-        loadChannelList();
-        loadChatWindow();
+        
 
     } else {
         hideChatWindow();
+        $("#userColumn").addClass("d-none");
+        $("#userList").empty();
         $("#channelList").empty();
         $("#createChannelBtn").addClass('d-none');
         $("#chatHistory").empty();
+        document.getElementById("deleteChannelBtn").classList.add('d-none');
+        document.getElementById("createChannelBtn").classList.add('d-none');
     }
 });
 
+//Delete channel
+$("#deleteChannelBtn").click(function() {
+  $("#deleteChannelConfirm").removeClass("d-none");
+  $("#deleteChannelCancel").removeClass("d-none");
+  $("#deleteChannelBtn").addClass("d-none");
+});
+$("#deleteChannelCancel").click(function() {
+  $("#deleteChannelConfirm").addClass("d-none");
+  $("#deleteChannelCancel").addClass("d-none");
+  $("#deleteChannelBtn").removeClass("d-none");
+});
+$("#deleteChannelConfirm").click(function() {
+   rtdb.remove(rtdb.ref(db, `/servers/${urlParams.get('server')}/channels/${urlParams.get('channel')}/`));
+});
+//Change nickname
+$("#changeName").click(function() {
+  $("#messageBox").val("/nickname ");
+  $("#messageBox").focus();
+});
 //Logout
 $("#logoutBtn").on("click", () => {
     fbauth.signOut(auth);
@@ -446,6 +595,31 @@ $("#registerBtn").on("click", () => {
     });
 });
 
+let successAlert = '<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>Success!</strong> Reset email sent, check your inbox to reset password.</div>';
+$("#resetEmailBtn").click(function () {
+  let email = $("#resetEmail").val();
+  fbauth
+    .sendPasswordResetEmail(auth, email)
+    .then((somedata) => {
+      console.log(somedata);
+      // clean up input
+      $("#resetEmail").val("");
+      $("#login").prepend(successAlert);
+      $("#resetLogin").click();
+    
+    })
+    .catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      alert(errorMessage); // notfiy user
+      console.log(errorCode);
+      console.log(errorMessage);
+    });
+  
+  $("#resetEmail").val("");
+});
+
 //Helper method to add message to database
 function addMessage(messageContents) {
     $("#messageBox").val("");
@@ -475,6 +649,35 @@ $("#returningUserText").click(function () {
     
 });
 
+$("#resetEmailFromLogText").click(function () {
+    
+    
+    $("#login").addClass("d-none");
+  
+    $("#reset").removeClass("d-none");
+    
+});
+
+$("#resetEmailFromRegText").click(function () {
+    $("#register").addClass("d-none");
+  
+    $("#reset").removeClass("d-none");
+    
+});
+$("#resetLogin").click(function () {
+    $("#login").removeClass("d-none");
+  
+    $("#reset").addClass("d-none");
+    
+});
+$("#resetLogin").click(function () {
+    $("#login").removeClass("d-none");
+  
+    $("#reset").addClass("d-none");
+    
+});
+
+
 document.getElementById("messageBox").addEventListener("keyup", function (event) {
     if (event.keyCode === 13 && document.activeElement === document.getElementById("messageBox")) {
         event.preventDefault();
@@ -495,6 +698,8 @@ document.getElementById("regpass2").addEventListener("keyup", function (event) {
         $("#registerBtn").click();
     }
 });
+
+
 
 //edited from: https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 function timeConverter(timestamp) {
